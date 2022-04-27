@@ -26,11 +26,17 @@ https://developer.nvidia.com/buy-jetson?product=jetson_tx2&location=US
 # Installation 
 ### Install FedML + PyTorch 1.4 on Raspberry Pi 4
 The following commands are running on Raspberry Pi 4
-```
-cd /home/pi
+```bash
+cd ~
 mkdir sourcecode
+cd sourcecode
 git clone https://github.com/FedML-AI/FedML-IoT.git
-cd FedML/fedml_iot
+
+# Download FedML sourcecode
+cd FedML-IoT/FedML
+git submodule init
+git submodule update
+cd ..
 ```
 After the above commands, please follow the script `install-arm.sh`.
 
@@ -40,7 +46,7 @@ We currently support PyTorch 1.4 for Raspberry Pi 4.
 If you need newer verion of PyTorch, please compile the wheel file using method here: https://nmilosev.svbtle.com/compling-arm-stuff-without-an-arm-board-build-pytorch-for-the-raspberry-pi
 
 To make sure your PyTorch + RPI environment is ready, please have a check as follows.
-```
+```bash
 $ python
 
 >>> import torch
@@ -49,10 +55,21 @@ $ python
 ```
 
 ### Install FedML + PyTorch 1.x on NVIDIA Jetson Nano
-Please check here: `fedml_iot/pytorch-pkg-on-jetson-nano/README.md`
+About Pytorch for NVIDIA Jetson Nano, please check here: [fedml_iot/pytorch-pkg-on-jetson-nano/README.md](fedml_iot/pytorch-pkg-on-jetson-nano/README.md)
+```bash
+cd ~
+mkdir sourcecode
+cd sourcecode
+git clone https://github.com/FedML-AI/FedML-IoT.git
 
-### Prepare Dataset
+# Download FedML sourcecode
+cd FedML-IoT/FedML
+git submodule init
+git submodule update
+cd ..
 ```
+### Prepare Dataset
+```bash
 cd FedML/data/MNIST/
 sh download_and_unzip.sh
 cd ../../../
@@ -69,14 +86,14 @@ git submodule update
 
 # Log Tracking
 Our log tracking platform is wandb.com. Please register your own ID and login as follows.
-```
-wandb login ee0b5f53d949c84cee7decbe7a629e63fb2f8408
+```bash
+wandb login [Your own wandb token ID eg. ee0b5f53d949c00007decbe7a629e63fb2f0000]
 ```
 
 # Launch FedML-Server Server
-FedML-IoT reuses the FedML-Server server code. So you can launch the server according to the guidance at `fedml_server/executor`.
+FedML-IoT reuses the FedML-Server server code. So you can launch the server according to the guidance at [fedml_server/executor](https://github.com/FedML-AI/FedML/tree/master/fedml_server).
 Please change the IP address of the server. Here, we assume the server IP is `127.0.0.1`.
-```
+```bash
 python app.py
 ```
 The default training is MNIST (dataset) + FedAvg (optimizer) + LR (model).
@@ -87,7 +104,7 @@ You can customize `app.py` as your need.
 # Launch FedML-IoT Client
 Here we assume you have FOUR IoT devices. Then you can run script in each one as follows.
 If your RPI device has more memory, you can run multiple `fedavg_rpi_client.py` processes in a single device.
-```
+```bash
 # for Raspberry Pi
 cd ./raspberry_pi/fedavg
 python fedavg_rpi_client.py --server_ip http://127.0.0.1:5000 --client_uuid '0'
@@ -96,7 +113,7 @@ python fedavg_rpi_client.py --server_ip http://127.0.0.1:5000 --client_uuid '2'
 python fedavg_rpi_client.py --server_ip http://127.0.0.1:5000 --client_uuid '3'
 ```
 
-```
+```bash
 # for NVIDIA Jetson Nano
 cd ./nvidia-jetson-nano/fedavg
 python fedavg_jetson_nano_client.py --server_ip http://127.0.0.1:5000 --client_uuid '0'
@@ -109,7 +126,7 @@ Note please change IP and other configuration according to your local environmen
 
 
 # Update FedML Submodule
-```
+```bash
 cd FedML
 git checkout master && git pull
 cd ..
